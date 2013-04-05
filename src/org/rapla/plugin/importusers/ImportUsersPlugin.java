@@ -1,5 +1,5 @@
 /*--------------------------------------------------------------------------*
- | Copyright (C) 2006 Christopher Kohlhaas                                  |
+ | Copyright (C) 2013 Christopher Kohlhaas                                  |
  |                                                                          |
  | This program is free software; you can redistribute it and/or modify     |
  | it under the terms of the GNU General Public License as published by the |
@@ -30,18 +30,12 @@ public class ImportUsersPlugin implements PluginDescriptor
         return "Import Users";
     }
 
-    /**
-     * @see org.rapla.framework.PluginDescriptor#provideServices(org.rapla.framework.general.Container)
-     */
     public void provideServices(Container container, Configuration config) {
         if ( !config.getAttributeAsBoolean("enabled", ENABLE_BY_DEFAULT) )
         	return;
 
-        container.addContainerProvidedComponent( I18nBundle.ROLE, I18nBundleImpl.class.getName(), RESOURCE_FILE,I18nBundleImpl.createConfig( RESOURCE_FILE ) );
-        container.addContainerProvidedComponent( RaplaExtensionPoints.CLIENT_EXTENSION, ImportUsersPluginInitializer.class.getName(), PLUGIN_CLASS, config);
-        //container.addContainerProvidedComponent( RaplaExtensionPoints.USER_OPTION_PANEL_EXTENSION, MyOption.class.getName(),PLUGIN_CLASS, config);
-
-        
+        container.addContainerProvidedComponent( I18nBundle.class, I18nBundleImpl.class, RESOURCE_FILE,I18nBundleImpl.createConfig( RESOURCE_FILE ) );
+        container.addContainerProvidedComponent( RaplaExtensionPoints.CLIENT_EXTENSION, ImportUsersPluginInitializer.class);
     }
 
     public Object getPluginMetaInfos( String key )

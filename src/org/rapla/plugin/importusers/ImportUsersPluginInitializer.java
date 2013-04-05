@@ -33,10 +33,11 @@ import org.rapla.framework.RaplaException;
 import org.rapla.gui.MenuExtensionPoint;
 import org.rapla.gui.RaplaGUIComponent;
 import org.rapla.gui.toolkit.DialogUI;
+import org.rapla.plugin.ClientExtension;
 import org.rapla.plugin.RaplaExtensionPoints;
 
 
-public class ImportUsersPluginInitializer extends RaplaGUIComponent
+public class ImportUsersPluginInitializer extends RaplaGUIComponent implements ClientExtension
 {
 
     public ImportUsersPluginInitializer(RaplaContext sm) throws RaplaException {
@@ -46,7 +47,7 @@ public class ImportUsersPluginInitializer extends RaplaGUIComponent
         if(!getUser().isAdmin())
         	return;
         setChildBundleName( ImportUsersPlugin.RESOURCE_FILE);
-        MenuExtensionPoint importMenu = (MenuExtensionPoint) getService( RaplaExtensionPoints.IMPORT_MENU_EXTENSION_POINT);
+        MenuExtensionPoint importMenu = getService( RaplaExtensionPoints.IMPORT_MENU_EXTENSION_POINT);
         importMenu.insert( createImportMenu());
 
         //MenuExtensionPoint export = (MenuExtensionPoint) getService( RaplaExtensionPoints.EXPORT_MENU_EXTENSION_POINT);
