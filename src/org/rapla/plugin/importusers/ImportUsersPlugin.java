@@ -11,17 +11,16 @@
  | Definition as published by the Open Source Initiative (OSI).             |
  *--------------------------------------------------------------------------*/
 package org.rapla.plugin.importusers;
+import org.rapla.client.ClientServiceContainer;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.components.xmlbundle.impl.I18nBundleImpl;
 import org.rapla.framework.Configuration;
-import org.rapla.framework.Container;
 import org.rapla.framework.PluginDescriptor;
 import org.rapla.framework.TypedComponentRole;
-import org.rapla.plugin.RaplaExtensionPoints;
-import org.rapla.plugin.RaplaPluginMetaInfo;
+import org.rapla.plugin.RaplaClientExtensionPoints;
 
 
-public class ImportUsersPlugin implements PluginDescriptor
+public class ImportUsersPlugin implements PluginDescriptor<ClientServiceContainer>
 {
 	public static final TypedComponentRole<I18nBundle> RESOURCE_FILE = new TypedComponentRole<I18nBundle>(ImportUsersPlugin.class.getPackage().getName() + ".ImportUsersResources");
     public static final String PLUGIN_CLASS = ImportUsersPlugin.class.getName();
@@ -31,19 +30,12 @@ public class ImportUsersPlugin implements PluginDescriptor
         return "Import Users";
     }
 
-    public void provideServices(Container container, Configuration config) {
+    public void provideServices(ClientServiceContainer container, Configuration config) {
         if ( !config.getAttributeAsBoolean("enabled", ENABLE_BY_DEFAULT) )
         	return;
 
         container.addContainerProvidedComponent( RESOURCE_FILE, I18nBundleImpl.class, I18nBundleImpl.createConfig( RESOURCE_FILE.getId() ) );
-        container.addContainerProvidedComponent( RaplaExtensionPoints.CLIENT_EXTENSION, ImportUsersPluginInitializer.class);
+        container.addContainerProvidedComponent( RaplaClientExtensionPoints.CLIENT_EXTENSION, ImportUsersPluginInitializer.class);
     }
 
-    public Object getPluginMetaInfos( String key )
-    {
-        if ( RaplaPluginMetaInfo.METAINFO_PLUGIN_ENABLED_BY_DEFAULT.equals( key )) {
-            return new Boolean( ENABLE_BY_DEFAULT );
-        }
-        return null;
-    }
 }
