@@ -14,9 +14,13 @@ package org.rapla.plugin.importusers;
 import org.rapla.client.ClientServiceContainer;
 import org.rapla.components.xmlbundle.I18nBundle;
 import org.rapla.components.xmlbundle.impl.I18nBundleImpl;
+import org.rapla.facade.ClientFacade;
 import org.rapla.framework.Configuration;
 import org.rapla.framework.PluginDescriptor;
+import org.rapla.framework.RaplaContextException;
+import org.rapla.framework.RaplaException;
 import org.rapla.framework.TypedComponentRole;
+import org.rapla.framework.logger.Logger;
 import org.rapla.plugin.RaplaClientExtensionPoints;
 
 
@@ -30,12 +34,19 @@ public class ImportUsersPlugin implements PluginDescriptor<ClientServiceContaine
         return "Import Users";
     }
 
-    public void provideServices(ClientServiceContainer container, Configuration config) {
+    public void provideServices(ClientServiceContainer container, Configuration config) throws RaplaContextException {
         if ( !config.getAttributeAsBoolean("enabled", ENABLE_BY_DEFAULT) )
         	return;
 
+        try {
+			if(!container.getContext().lookup(ClientFacade.class).getUser().isAdmin())
+				return;
+		} catch (RaplaException e) {
+			container.getContext().lookup(Logger.class).error(e.getMessage(), e);
+			return;
+		}
         container.addContainerProvidedComponent( RESOURCE_FILE, I18nBundleImpl.class, I18nBundleImpl.createConfig( RESOURCE_FILE.getId() ) );
-        container.addContainerProvidedComponent( RaplaClientExtensionPoints.CLIENT_EXTENSION, ImportUsersPluginInitializer.class);
+        container.addContainerProvidedComponent( RaplaClientExtensionPoints.IMPORT_MENU_EXTENSION_POINT, ImportUsersMenu.class);
     }
 
 }

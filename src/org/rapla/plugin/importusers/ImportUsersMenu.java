@@ -30,51 +30,47 @@ import org.rapla.entities.User;
 import org.rapla.facade.ClientFacade;
 import org.rapla.framework.RaplaContext;
 import org.rapla.framework.RaplaException;
-import org.rapla.gui.MenuExtensionPoint;
 import org.rapla.gui.RaplaGUIComponent;
 import org.rapla.gui.toolkit.DialogUI;
-import org.rapla.plugin.ClientExtension;
-import org.rapla.plugin.RaplaClientExtensionPoints;
+import org.rapla.gui.toolkit.IdentifiableMenuEntry;
 
 
-public class ImportUsersPluginInitializer extends RaplaGUIComponent implements ClientExtension
+public class ImportUsersMenu extends RaplaGUIComponent implements IdentifiableMenuEntry, ActionListener
 {
 
-    public ImportUsersPluginInitializer(RaplaContext sm) throws RaplaException {
+	JMenuItem item;
+	String id = "Users from CSV";
+    public ImportUsersMenu(RaplaContext sm) {
         super(sm);
-        //MenuExtensionPoint helpMenu = (MenuExtensionPoint) getService( RaplaExtensionPoints.HELP_MENU_EXTENSION_POINT);
-        //helpMenu.insert(createInfoMenu() );
-        if(!getUser().isAdmin())
-        	return;
+    
         setChildBundleName( ImportUsersPlugin.RESOURCE_FILE);
-        MenuExtensionPoint importMenu = getService( RaplaClientExtensionPoints.IMPORT_MENU_EXTENSION_POINT);
-        importMenu.insert( createImportMenu());
-
-        //MenuExtensionPoint export = (MenuExtensionPoint) getService( RaplaExtensionPoints.EXPORT_MENU_EXTENSION_POINT);
-        //export.insert(createExportMenu() );
+		JMenuItem item = new JMenuItem( id );
+        item.setIcon( getIcon("icon.import") );
+        item.addActionListener(this);
     }
 
 
-    private JMenuItem createImportMenu( ) {
-        JMenuItem item = new JMenuItem( "Users from CSV" );
-        item.setIcon( getIcon("icon.import") );
-        item.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    try {
-                        final Frame frame = (Frame) SwingUtilities.getRoot(getMainComponent());
-                        IOInterface io =  getService( IOInterface.class);
-                        FileContent file = io.openFile( frame, null, new String[] {".csv"});
-                        if ( file != null) {
-                            Reader reader = new InputStreamReader( file.getInputStream());
-                            String msg = ImportUsers( getClientFacade(), reader);
-                            confirmImport(frame, msg);
-                        }
-                     } catch (Exception ex) {
-                        showException( ex, getMainComponent() );
-                    }
-                }
-        });
+    public JMenuItem getMenuElement( ) {
         return item;
+    }
+
+    public String getId() {
+    	return id;
+    }
+    
+    public void actionPerformed(ActionEvent evt) {
+        try {
+            final Frame frame = (Frame) SwingUtilities.getRoot(getMainComponent());
+            IOInterface io =  getService( IOInterface.class);
+            FileContent file = io.openFile( frame, null, new String[] {".csv"});
+            if ( file != null) {
+                Reader reader = new InputStreamReader( file.getInputStream());
+                String msg = ImportUsers( getClientFacade(), reader);
+                confirmImport(frame, msg);
+            }
+         } catch (Exception ex) {
+            showException( ex, getMainComponent() );
+        }
     }
     
 	 private void confirmImport(final Component parentComponent, String msg) throws RaplaException {
