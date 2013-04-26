@@ -44,7 +44,7 @@ public class ImportUsersMenu extends RaplaGUIComponent implements IdentifiableMe
         super(sm);
     
         setChildBundleName( ImportUsersPlugin.RESOURCE_FILE);
-		JMenuItem item = new JMenuItem( id );
+		item = new JMenuItem( id );
         item.setIcon( getIcon("icon.import") );
         item.addActionListener(this);
     }
